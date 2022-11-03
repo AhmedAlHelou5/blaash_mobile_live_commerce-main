@@ -1,0 +1,8 @@
+<resources>
+    <string name="viewCountApi">https://fxojmluid9.execute-api.ap-south-1.amazonaws.com/Prod/api/engt/getStreamInformation</string>
+    <string name="getStreamCredsApi">https://fxojmluid9.execute-api.ap-south-1.amazonaws.com/Prod/api/engt/getChannelBroadcastSettings</string>
+    <string name="updateChannelStatusApi">https://fxojmluid9.execute-api.ap-south-1.amazonaws.com/Prod/api/engt/updateChannelStatus</string>
+    <string name="getProductDetailsApi">https://q261x21b15.execute-api.ap-south-1.amazonaws.com/Prod/api/evnt/getProductdetails</string>
+    <string name="getScheduleLive">https://fxojmluid9.execute-api.ap-south-1.amazonaws.com/Prod/api/engt/getScheduleLive</string>
+    <string name="channelErrorMessage">No Channel Available for Streaming, try after sometime</string>
+</resources>

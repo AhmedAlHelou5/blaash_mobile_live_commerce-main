@@ -1,0 +1,6 @@
+API_KEY = "MXqO3cDcr492OTPGZZAot7akPvLmfKbA4bKt5Ryr"
+UI_URL = "https://d3s1h21vy1aj1w.cloudfront.net"
+CLIENT_ID = "DIVANOR123"
+CLIENT_SECRET = "asdasdasdr34344eakjdfdivanor"
+API_URL = "https://q261x21b15.execute-api.ap-south-1.amazonaws.com/Prod/api/evnt/pushevent"
+TENANT_KEY = "DIVANOR123"

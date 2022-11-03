@@ -1,0 +1,140 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    flavorDimensions
+    productFlavors
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.example.best_flutter_ui_templates"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
+        minSdkVersion 21
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+
+        buildConfigField 'String', 'API_KEY', '\"MXqO3cDcr492OTPGZZAot7akPvLmfKbA4bKt5Ryr\"'
+        buildConfigField 'java.util.Hashtable<String, String>', 'PropertyPairs', makePropertyHashTable(getRootDir().getPath() + File.separator + 'config/dev.configuration')
+
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+        }
+        applicationVariants.all {
+                // this method is use to rename your all apk weather
+                // it may be signed or unsigned(debug apk)
+            variant ->
+                variant.outputs.each {
+                    output ->
+                        def name = "Blaash.apk"
+                        // on below line we are setting the
+                        // outputFile Name to our apk file.
+                        output.outputFileName = name
+                }
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'com.amazonaws:ivs-broadcast:1.5.0'
+    
+    implementation 'com.github.delight-im:Android-AdvancedWebView:v3.2.1'
+    implementation 'com.google.firebase:firebase-messaging:23.0.6'
+    implementation 'com.google.firebase:firebase-inappmessaging-display'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation platform('com.google.firebase:firebase-bom:30.3.0')
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+}
+
+def envConfig() {
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            envConfig = getProps("../config/dev.configuration")
+            uiUrl = envConfig.getProperty("UI_URL").replace("\"", "")
+            clientId = envConfig.getProperty("CLIENT_ID").replace("\"", "")
+            clientSecret = envConfig.getProperty("CLIENT_SECRET").replace("\"", "")
+            apiUrl = envConfig.getProperty("API_URL").replace("\"", "")
+            apiKey = envConfig.getProperty("API_KEY").replace("\"", "")
+        }
+    }
+}
+
+def makePropertyHashTable(filename) {
+    def devProperties = new Properties()
+    try {
+        devProperties.load(new FileInputStream(file(filename)))
+    } catch (FileNotFoundException e) {
+        devProperties = null
+        System.out.println('devProperties value is null')
+    }
+
+    // result example: new Hashtable<String, Boolean>(){{ put(true, "a"); }};
+    def prefix = 'new java.util.Hashtable<String, String>(){{'
+    def suffix = '}}'
+    def value = ''
+    if (devProperties != null) {
+        for (d in devProperties) {
+            value += String.format('put("%s",%s); ', d.key, d.value)
+        }
+    }
+    return String.format('%s%s%s', prefix, value, suffix)
+}

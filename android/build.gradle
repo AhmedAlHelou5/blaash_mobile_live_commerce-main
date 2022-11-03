@@ -1,0 +1,60 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext{
+
+}
+def getProps(path)
+{
+    Properties props = new Properties()
+    props.load(new FileInputStream(file(path)))
+    return props
+}
+def getCurrentFlavor()
+{
+    Gradle gradle = getGradle()
+    def pattern = Pattern.compile("([A-Z][A-Za-z]+)(Release|Debug)")
+    def flavor = ""
+    gradle.getStartParameter().getTaskNames().any{name ->
+        Matcher matcher = pattern.matcher(name)
+        if(matcher.find())
+        {
+            flavor = matcher.group(1).toLowerCase()
+            return true
+        }
+    }
+    return flavor
+}
